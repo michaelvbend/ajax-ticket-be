@@ -1,6 +1,6 @@
-# someValue
+# Ajax Ticket Alerts
 
-How to start the someValue application
+How to start the Ajax Alerting application
 ---
 
 1. Run `mvn clean install` to build your application
