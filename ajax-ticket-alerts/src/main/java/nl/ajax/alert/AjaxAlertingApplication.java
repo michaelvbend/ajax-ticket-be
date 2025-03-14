@@ -1,11 +1,11 @@
 package nl.ajax.alert;
 
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import io.dropwizard.Application;
+import io.dropwizard.core.Application;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import nl.ajax.alert.core.MatchService;
 import nl.ajax.alert.db.MatchDAO;
 import nl.ajax.alert.db.models.Match;

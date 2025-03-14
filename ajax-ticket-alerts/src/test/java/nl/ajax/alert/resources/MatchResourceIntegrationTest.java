@@ -2,6 +2,9 @@ package nl.ajax.alert.resources;
 
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import nl.ajax.alert.AjaxAlertingApplication;
 import nl.ajax.alert.AjaxAlertingConfiguration;
 import nl.ajax.alert.api.MatchDTO;
@@ -15,9 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,7 +41,7 @@ class MatchResourceIntegrationTest {
     void cleanUp() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            session.createQuery("DELETE FROM Match").executeUpdate();
+            session.createMutationQuery("DELETE FROM Match").executeUpdate();
             session.getTransaction().commit();
         }
     }
@@ -50,8 +50,8 @@ class MatchResourceIntegrationTest {
     void testGetMatches() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            session.save(new Match("1", "Ajax", "PSV", false, "http://example.com/match1", LocalDateTime.now()));
-            session.save(new Match("2", "Ajax", "Feyenoord", true, "http://example.com/match2", LocalDateTime.now()));
+            session.persist(new Match("1", "Ajax", "PSV", false, "http://example.com/match1", LocalDateTime.now()));
+            session.persist(new Match("2", "Ajax", "Feyenoord", true, "http://example.com/match2", LocalDateTime.now()));
             session.getTransaction().commit();
         }
 
