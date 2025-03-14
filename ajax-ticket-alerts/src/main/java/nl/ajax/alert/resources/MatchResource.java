@@ -1,14 +1,13 @@
 package nl.ajax.alert.resources;
 
 import io.dropwizard.hibernate.UnitOfWork;
-import nl.ajax.alert.api.MatchCallbackRequest;
-import nl.ajax.alert.api.MatchDTO;
+import nl.ajax.alert.api.request.MatchCallbackRequest;
+import nl.ajax.alert.api.response.MatchesResponse;
 import nl.ajax.alert.core.MatchService;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 @Path("/matches")
 @Produces(MediaType.APPLICATION_JSON)
@@ -22,7 +21,7 @@ public class MatchResource {
 
     @GET
     @UnitOfWork
-    public List<MatchDTO> getMatches() {
+    public MatchesResponse getMatches() {
         return matchService.getAllMatches();
     }
 
@@ -30,6 +29,6 @@ public class MatchResource {
     @UnitOfWork
     @Consumes(MediaType.APPLICATION_JSON)
     public void putMatches(@Valid MatchCallbackRequest matchRequest) {
-        matchService.updateMatches(matchRequest);
+        matchService.syncMatches(matchRequest);
     }
 }

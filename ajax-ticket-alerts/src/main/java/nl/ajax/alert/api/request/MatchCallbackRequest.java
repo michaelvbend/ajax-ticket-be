@@ -1,15 +1,14 @@
-package nl.ajax.alert.api;
+package nl.ajax.alert.api.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import nl.ajax.alert.api.MatchDTO;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatchCallbackRequest {

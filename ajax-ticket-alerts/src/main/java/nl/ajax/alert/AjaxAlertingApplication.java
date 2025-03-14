@@ -25,11 +25,6 @@ public class AjaxAlertingApplication extends Application<AjaxAlertingConfigurati
     }
 
     @Override
-    public String getName() {
-        return "";
-    }
-
-    @Override
     public void initialize(final Bootstrap<AjaxAlertingConfiguration> bootstrap) {
         bootstrap.getObjectMapper().registerModule(new ParameterNamesModule());
         bootstrap.addBundle(hibernateBundle);
@@ -41,5 +36,10 @@ public class AjaxAlertingApplication extends Application<AjaxAlertingConfigurati
         final MatchDAO matchDAO = new MatchDAO(hibernateBundle.getSessionFactory());
         MatchService matchService = new MatchService(matchDAO);
         environment.jersey().register(new MatchResource(matchService));
+    }
+
+    // ✅ New Getter for HibernateBundle
+    public HibernateBundle<AjaxAlertingConfiguration> getHibernateBundle() {
+        return hibernateBundle;
     }
 }
