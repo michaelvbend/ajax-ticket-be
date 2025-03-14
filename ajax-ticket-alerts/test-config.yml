@@ -8,3 +8,7 @@ database:
   maxSize: 10
   properties:
     hibernate.hbm2ddl.auto: update
+server:
+  applicationConnectors:
+    - type: http
+      port: 8085
