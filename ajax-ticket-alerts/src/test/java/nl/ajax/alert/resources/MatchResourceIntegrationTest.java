@@ -7,9 +7,11 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import nl.ajax.alert.AjaxAlertingApplication;
 import nl.ajax.alert.AjaxAlertingConfiguration;
+import nl.ajax.alert.TestAjaxAlertingApplication;
 import nl.ajax.alert.api.MatchDTO;
 import nl.ajax.alert.api.request.MatchCallbackRequest;
 import nl.ajax.alert.api.response.MatchesResponse;
+import nl.ajax.alert.client.TwilioService;
 import nl.ajax.alert.db.models.Match;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -17,6 +19,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,14 +31,21 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @ExtendWith(DropwizardExtensionsSupport.class)
 class MatchResourceIntegrationTest {
 
-    private static final DropwizardAppExtension<AjaxAlertingConfiguration> RULE =
-            new DropwizardAppExtension<>(AjaxAlertingApplication.class, "test-config.yml");
+//    private static final DropwizardAppExtension<AjaxAlertingConfiguration> RULE =
+//            new DropwizardAppExtension<>(TestAjaxAlertingApplication.class, "test-config.yml");
+    private static final TwilioService twilioServiceMock = Mockito.mock(TwilioService.class);
+
+    @RegisterExtension
+    static final DropwizardAppExtension<AjaxAlertingConfiguration> RULE =
+            new DropwizardAppExtension<>(TestAjaxAlertingApplication.class, "test-config.yml");
 
     private SessionFactory sessionFactory;
 
     @BeforeEach
     void setup() {
+        TestAjaxAlertingApplication.setTwilioServiceMock(twilioServiceMock);
         sessionFactory = ((AjaxAlertingApplication) RULE.getApplication()).getHibernateBundle().getSessionFactory();
+
     }
 
     @AfterEach

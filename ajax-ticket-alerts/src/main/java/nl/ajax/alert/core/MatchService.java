@@ -1,15 +1,21 @@
 package nl.ajax.alert.core;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.ajax.alert.api.request.MatchCallbackRequest;
 import nl.ajax.alert.api.MatchDTO;
 import nl.ajax.alert.api.response.MatchesResponse;
+import nl.ajax.alert.core.types.MatchUpdateListener;
 import nl.ajax.alert.db.MatchDAO;
 import nl.ajax.alert.db.models.Match;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 public class MatchService {
+    private final List<MatchUpdateListener> matchUpdateListeners = new ArrayList<>();
     private final MatchDAO dao;
 
     public MatchService(MatchDAO matchDAO) {
@@ -17,42 +23,60 @@ public class MatchService {
     }
 
     public MatchesResponse getAllMatches() {
-        List<Match> listOfMatches = dao.findAllMatches();
-        return new MatchesResponse(listOfMatches
-                .stream()
+        List<MatchDTO> matchDTOs = dao.findAllMatches().stream()
                 .map(match -> new MatchDTO(
                         match.getHomeTeam(),
                         match.getAwayTeam(),
                         match.isSoldOut(),
                         match.getMatchLink()))
-                .toList());
+                .toList();
+        return new MatchesResponse(matchDTOs);
     }
 
     public void syncMatches(MatchCallbackRequest matchCallbackRequest) {
-        for (MatchDTO match : matchCallbackRequest.getMatches()) {
-            String matchId = match.getHomeTeam() + "-" + match.getAwayTeam();
-            Match matchFound = dao.findMatchById(matchId);
-            if (matchFound == null) {
-                addNewMatch(matchId, match);
-            } else {
-               updateMatch(matchFound);
-            }
+        matchCallbackRequest.getMatches().forEach(this::processMatch);
+        notifyListeners(matchCallbackRequest.getMatches());
+    }
+
+    public void addListener(MatchUpdateListener listener) {
+        matchUpdateListeners.add(listener);
+    }
+
+    private void notifyListeners(List<MatchDTO> updatedMatches) {
+        log.info("Notify listeners for updated matches");
+        for (MatchUpdateListener listener : matchUpdateListeners) {
+            new Thread(() -> listener.onMatchUpdate(updatedMatches)).start();
         }
     }
 
-    private void addNewMatch(String matchId, MatchDTO match) {
-        Match newMatch = new Match();
-        newMatch.setId(matchId);
-        newMatch.setHomeTeam(match.getHomeTeam());
-        newMatch.setAwayTeam(match.getAwayTeam());
-        newMatch.setSoldOut(match.isSoldOut());
-        newMatch.setLastModified(LocalDateTime.now());
-        dao.save(newMatch);
+    private void processMatch(MatchDTO matchDTO) {
+        String matchId = matchDTO.getHomeTeam() + "-" + matchDTO.getAwayTeam();
+        Optional<Match> existingMatch = dao.findMatchById(matchId);
+
+        if (existingMatch.isPresent()) {
+            updateMatchIfChanged(existingMatch.get(), matchDTO);
+        } else {
+            addNewMatch(matchId, matchDTO);
+        }
+        log.info("Match processed: {}", matchDTO);
     }
 
-    private void updateMatch(Match match) {
-        match.setSoldOut(match.isSoldOut());
-        match.setLastModified(LocalDateTime.now());
-        dao.save(match);
+    private void addNewMatch(String matchId, MatchDTO matchDTO) {
+        Match newMatch = new Match();
+        newMatch.setId(matchId);
+        newMatch.setHomeTeam(matchDTO.getHomeTeam());
+        newMatch.setAwayTeam(matchDTO.getAwayTeam());
+        newMatch.setSoldOut(matchDTO.isSoldOut());
+        newMatch.setLastModified(LocalDateTime.now());
+        dao.save(newMatch);
+
+    }
+
+    private void updateMatchIfChanged(Match match, MatchDTO matchDTO) {
+        if (match.isSoldOut() != matchDTO.isSoldOut()) {
+            match.setSoldOut(matchDTO.isSoldOut());
+            match.setLastModified(LocalDateTime.now());
+            dao.save(match);
+        }
     }
 }

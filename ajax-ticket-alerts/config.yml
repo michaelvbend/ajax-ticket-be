@@ -12,3 +12,5 @@ database:
   maxSize: 10
   properties:
     hibernate.hbm2ddl.auto: update
+twilioAccountSid: ${TWILIO_ACCOUNT_SID}
+twilioAuthToken: ${TWILIO_AUTH_TOKEN}

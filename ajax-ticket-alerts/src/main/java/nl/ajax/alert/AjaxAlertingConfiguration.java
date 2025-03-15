@@ -19,4 +19,23 @@ public class AjaxAlertingConfiguration extends Configuration {
     @JsonProperty("database")
     public DataSourceFactory getDataSourceFactory() {
         return database;
-    }}
+    }
+
+    @NotNull
+    private String twilioAccountSid;
+
+    @NotNull
+    private String twilioAuthToken;
+
+    public String getTwilioAccountSid() {
+        return System.getenv("TWILIO_ACCOUNT_SID") != null
+                ? System.getenv("TWILIO_ACCOUNT_SID")
+                : twilioAccountSid;
+    }
+
+    public String getTwilioAuthToken() {
+        return System.getenv("TWILIO_AUTH_TOKEN") != null
+                ? System.getenv("TWILIO_AUTH_TOKEN")
+                : twilioAuthToken;
+    }
+}

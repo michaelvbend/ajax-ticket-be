@@ -3,15 +3,18 @@ package nl.ajax.alert.core;
 import nl.ajax.alert.api.MatchDTO;
 import nl.ajax.alert.api.request.MatchCallbackRequest;
 import nl.ajax.alert.api.response.MatchesResponse;
+import nl.ajax.alert.client.TwilioService;
 import nl.ajax.alert.db.MatchDAO;
 import nl.ajax.alert.db.models.Match;
 
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -24,7 +27,7 @@ class MatchServiceTest {
     @BeforeEach
     void setup() {
         mockMatchDAO = mock(MatchDAO.class);
-        matchService = new MatchService(mockMatchDAO);
+        matchService = new MatchService(mockMatchDAO );
     }
 
     @Test
@@ -63,7 +66,7 @@ class MatchServiceTest {
         MatchCallbackRequest request = new MatchCallbackRequest();
         request.setMatches(List.of(matchDTO));
 
-        when(mockMatchDAO.findMatchById("Ajax-PSV")).thenReturn(null);
+        when(mockMatchDAO.findMatchById("Ajax-PSV")).thenReturn(Optional.empty());
 
         matchService.syncMatches(request);
 
@@ -90,7 +93,7 @@ class MatchServiceTest {
         existingMatch.setAwayTeam("PSV");
         existingMatch.setSoldOut(false);
 
-        when(mockMatchDAO.findMatchById("Ajax-PSV")).thenReturn(existingMatch);
+        when(mockMatchDAO.findMatchById("Ajax-PSV")).thenReturn(Optional.of(existingMatch));
 
         matchService.syncMatches(request);
 

@@ -5,6 +5,7 @@ import nl.ajax.alert.db.models.Match;
 import org.hibernate.SessionFactory;
 
 import java.util.List;
+import java.util.Optional;
 
 public class MatchDAO extends AbstractDAO<Match> {
 
@@ -16,8 +17,8 @@ public class MatchDAO extends AbstractDAO<Match> {
         return query("FROM Match").list();
     }
 
-    public Match findMatchById(String id) {
-        return get(id);
+    public Optional<Match> findMatchById(String id) {
+        return Optional.ofNullable(get(id));
     }
 
     public void save(Match match) {

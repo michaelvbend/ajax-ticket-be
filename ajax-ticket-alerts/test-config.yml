@@ -12,3 +12,5 @@ server:
   applicationConnectors:
     - type: http
       port: 8085
+twilioAccountSid: MOCK
+twilioAuthToken: MOCK
