@@ -28,24 +28,24 @@ public class MatchService {
                         match.getHomeTeam(),
                         match.getAwayTeam(),
                         match.isSoldOut(),
-                        match.getMatchLink()))
+                        match.getMatchLink()
+                ))
                 .toList();
         return new MatchesResponse(matchDTOs);
     }
 
     public void syncMatches(MatchCallbackRequest matchCallbackRequest) {
         matchCallbackRequest.getMatches().forEach(this::processMatch);
-        notifyListeners(matchCallbackRequest.getMatches());
     }
 
     public void addListener(MatchUpdateListener listener) {
         matchUpdateListeners.add(listener);
     }
 
-    private void notifyListeners(List<MatchDTO> updatedMatches) {
+    private void notifyListeners(MatchDTO updatedMatch) {
         log.info("Notify listeners for updated matches");
         for (MatchUpdateListener listener : matchUpdateListeners) {
-            new Thread(() -> listener.onMatchUpdate(updatedMatches)).start();
+            new Thread(() -> listener.onMatchUpdate(updatedMatch)).start();
         }
     }
 
@@ -77,6 +77,7 @@ public class MatchService {
             match.setSoldOut(matchDTO.isSoldOut());
             match.setLastModified(LocalDateTime.now());
             dao.save(match);
+            notifyListeners(matchDTO);
         }
     }
 }

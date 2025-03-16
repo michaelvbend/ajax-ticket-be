@@ -14,11 +14,11 @@ public class SubscribeService {
         this.subscriptionDAO = subscriptionDAO;
     }
 
-    public List<Subscription> getSubscriptionDetails() {
-        return subscriptionDAO.findAllSubscriptions();
+    public List<Subscription> getSubscriptionDetails(String matchAgainst) {
+        return subscriptionDAO.findAllSubscriptionsByMatchAgainst(matchAgainst);
     }
 
     public void saveSubscriptionDetails(SubscriptionRequest subscriptionRequest) {
-        subscriptionDAO.save(new Subscription(subscriptionRequest.getEmail()));
+        subscriptionDAO.save(new Subscription(subscriptionRequest.getEmail(), subscriptionRequest.getMatchAgainst()));
     }
 }

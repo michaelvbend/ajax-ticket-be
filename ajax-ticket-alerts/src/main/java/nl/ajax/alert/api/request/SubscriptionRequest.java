@@ -14,4 +14,8 @@ public class SubscriptionRequest {
     @NotNull
     @JsonProperty("email")
     private String email;
+
+    @NotNull
+    @JsonProperty("matchAgainst")
+    private String matchAgainst;
 }

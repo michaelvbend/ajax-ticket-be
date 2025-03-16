@@ -16,5 +16,14 @@ public class SubscriptionDAO extends AbstractDAO<Subscription> {
             return session.createQuery("FROM Subscription", Subscription.class).list();
         }
     }
+
+    public List<Subscription> findAllSubscriptionsByMatchAgainst(String matchAgainst) {
+        try (Session session = this.sessionFactory.openSession()) {
+            return session.createQuery("FROM Subscription WHERE matchAgainst = :matchAgainst", Subscription.class)
+                    .setParameter("matchAgainst", matchAgainst)
+                    .list();
+        }
+    }
+
     public void save(Subscription subscription) { persist(subscription); }
 }
