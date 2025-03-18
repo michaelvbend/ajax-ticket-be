@@ -69,10 +69,10 @@ public class TwilioService {
         String subject = String.format("Ajax - %s Tickets Available!", matchDTO.getAwayTeam());
         String emailBody = """
                     New Ajax tickets for the match against %s are available!
-                    Get yours now: resale.ajax.nl/content
+                    Get yours now: %s
                 
                     If you no longer wish to receive these emails, click here to unsubscribe: <%%asm_group_unsubscribe_raw_url%%>
-                """.formatted(matchDTO.getAwayTeam());
+                """.formatted(matchDTO.getAwayTeam(), matchDTO.getMatchLink());
         Content content = new Content("text/plain", emailBody);
         Mail mail = new Mail(from, subject, to, content);
         ASM asm = new ASM();
