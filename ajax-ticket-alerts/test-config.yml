@@ -14,3 +14,5 @@ server:
       port: 8085
 twilioAccountSid: MOCK
 twilioAuthToken: MOCK
+twilioPhoneNumber: "+1234567890"
+sendGridApiKey: "SENDGRID_API_KEY"

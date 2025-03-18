@@ -18,14 +18,14 @@ import nl.ajax.alert.core.SubscribeService;
 public class SubscribeResource {
     private final SubscribeService subscribeService;
 
-    public SubscribeResource(final SubscribeService subscribeService) {
+    public SubscribeResource(SubscribeService subscribeService) {
         this.subscribeService = subscribeService;
     }
 
     @POST
     @UnitOfWork
     @Consumes(MediaType.APPLICATION_JSON)
-    public void saveSubscriptionDetails(@NotNull @Valid final SubscriptionRequest subscriptionRequest) {
+    public void saveSubscriptionDetails(@NotNull @Valid SubscriptionRequest subscriptionRequest) {
         log.info("Received request to save subscription details");
         subscribeService.saveSubscriptionDetails(subscriptionRequest);
     }

@@ -3,10 +3,8 @@ package nl.ajax.alert.core;
 import nl.ajax.alert.api.MatchDTO;
 import nl.ajax.alert.client.TwilioService;
 import nl.ajax.alert.core.types.MatchUpdateListener;
-import nl.ajax.alert.db.models.Match;
 import nl.ajax.alert.db.models.Subscription;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class NotificationService implements MatchUpdateListener {
@@ -28,7 +26,7 @@ public class NotificationService implements MatchUpdateListener {
                     .map(Subscription::getEmail)
                     .toList();
 
-            twilioService.sendEmail(emailList);
+            twilioService.sendEmail(emailList, matchDTO);
         }
     }
 }

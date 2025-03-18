@@ -4,8 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
 public class AjaxAlertingConfiguration extends Configuration {
     @Valid
     @NotNull
@@ -21,21 +25,22 @@ public class AjaxAlertingConfiguration extends Configuration {
         return database;
     }
 
-    @NotNull
+    @NotEmpty
+    @JsonProperty("twilioAccountSid")
     private String twilioAccountSid;
 
-    @NotNull
+    @NotEmpty
+    @JsonProperty("twilioAuthToken")
     private String twilioAuthToken;
 
-    public String getTwilioAccountSid() {
-        return System.getenv("TWILIO_ACCOUNT_SID") != null
-                ? System.getenv("TWILIO_ACCOUNT_SID")
-                : twilioAccountSid;
-    }
+    @NotEmpty
+    @JsonProperty("twilioPhoneNumber")
+    private String twilioPhoneNumber;
 
-    public String getTwilioAuthToken() {
-        return System.getenv("TWILIO_AUTH_TOKEN") != null
-                ? System.getenv("TWILIO_AUTH_TOKEN")
-                : twilioAuthToken;
-    }
+    @NotEmpty
+    @JsonProperty("sendGridApiKey")
+    private String sendGridApiKey;
+
+    @JsonProperty("twilioEmail")
+    private String twilioEmail;
 }

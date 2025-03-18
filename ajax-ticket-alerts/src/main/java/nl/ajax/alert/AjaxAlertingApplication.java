@@ -1,6 +1,8 @@
 package nl.ajax.alert;
 
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.core.Application;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
@@ -37,6 +39,10 @@ public class AjaxAlertingApplication extends Application<AjaxAlertingConfigurati
 
     @Override
     public void initialize(final Bootstrap<AjaxAlertingConfiguration> bootstrap) {
+        EnvironmentVariableSubstitutor substitutor = new EnvironmentVariableSubstitutor(false);
+        SubstitutingSourceProvider provider =
+                new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(), substitutor);
+        bootstrap.setConfigurationSourceProvider(provider);
         bootstrap.getObjectMapper().registerModule(new ParameterNamesModule());
         bootstrap.addBundle(hibernateBundle);
     }
@@ -49,10 +55,7 @@ public class AjaxAlertingApplication extends Application<AjaxAlertingConfigurati
         final SubscriptionDAO subscriptionDAO = new SubscriptionDAO(hibernateBundle.getSessionFactory());
         final SubscribeService subscribeService = new SubscribeService(subscriptionDAO);
 
-        TwilioService twilioService = new TwilioService(
-                configuration.getTwilioAccountSid(),
-                configuration.getTwilioAuthToken()
-        );
+        TwilioService twilioService = new TwilioService(configuration);
         NotificationService notificationService = new NotificationService(twilioService, subscribeService);
         MatchService matchService = new MatchService(matchDAO);
         matchService.addListener(notificationService);

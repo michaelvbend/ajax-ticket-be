@@ -24,4 +24,6 @@ public class MatchDAO extends AbstractDAO<Match> {
     public void save(Match match) {
         persist(match);
     }
+
+    public void deleteMatch(Match match) {currentSession().delete(match);}
 }

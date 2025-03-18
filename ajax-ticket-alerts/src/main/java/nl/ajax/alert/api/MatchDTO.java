@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 
 @Getter
 @NoArgsConstructor
@@ -25,4 +27,19 @@ public class MatchDTO {
 
         @JsonProperty("matchLink")
         private String matchLink;
+
+        @Override
+        public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                MatchDTO matchDTO = (MatchDTO) o;
+                return Objects.equals(homeTeam, matchDTO.homeTeam) &&
+                        Objects.equals(awayTeam, matchDTO.awayTeam);        }
+
+
+        @Override
+        public int hashCode() {
+                return Objects.hash(homeTeam, awayTeam);
+        }
+
 }

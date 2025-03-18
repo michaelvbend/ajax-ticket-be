@@ -31,7 +31,7 @@ public class MatchResource {
     @PUT
     @UnitOfWork
     @Consumes(MediaType.APPLICATION_JSON)
-    public void putMatches(@NotNull @Valid final MatchCallbackRequest matchRequest) {
+    public void putMatches(@NotNull @Valid MatchCallbackRequest matchRequest) {
         log.info("Received request to save matches");
         matchService.syncMatches(matchRequest);
     }

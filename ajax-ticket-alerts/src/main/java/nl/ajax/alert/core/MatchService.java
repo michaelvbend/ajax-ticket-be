@@ -9,12 +9,13 @@ import nl.ajax.alert.db.MatchDAO;
 import nl.ajax.alert.db.models.Match;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 public class MatchService {
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
     private final List<MatchUpdateListener> matchUpdateListeners = new ArrayList<>();
     private final MatchDAO dao;
 
@@ -35,6 +36,16 @@ public class MatchService {
     }
 
     public void syncMatches(MatchCallbackRequest matchCallbackRequest) {
+        List<Match> matchList = dao.findAllMatches();
+        Set<MatchDTO> matchSet = new HashSet<>(matchCallbackRequest.getMatches());
+
+        for (Match match : matchList) {
+            MatchDTO existingMatch = new MatchDTO(match.getHomeTeam(), match.getAwayTeam(), match.isSoldOut(), match.getMatchLink());
+            if (!matchSet.contains(existingMatch)) {
+                log.info("Deleting match {}", match.getAwayTeam());
+                deleteMatchAfterPlayed(match);
+            }
+        }
         matchCallbackRequest.getMatches().forEach(this::processMatch);
     }
 
@@ -45,7 +56,7 @@ public class MatchService {
     private void notifyListeners(MatchDTO updatedMatch) {
         log.info("Notify listeners for updated matches");
         for (MatchUpdateListener listener : matchUpdateListeners) {
-            new Thread(() -> listener.onMatchUpdate(updatedMatch)).start();
+            executorService.submit(() -> listener.onMatchUpdate(updatedMatch));
         }
     }
 
@@ -67,6 +78,7 @@ public class MatchService {
         newMatch.setHomeTeam(matchDTO.getHomeTeam());
         newMatch.setAwayTeam(matchDTO.getAwayTeam());
         newMatch.setSoldOut(matchDTO.isSoldOut());
+        newMatch.setMatchLink(matchDTO.getMatchLink());
         newMatch.setLastModified(LocalDateTime.now());
         dao.save(newMatch);
 
@@ -75,9 +87,14 @@ public class MatchService {
     private void updateMatchIfChanged(Match match, MatchDTO matchDTO) {
         if (match.isSoldOut() != matchDTO.isSoldOut()) {
             match.setSoldOut(matchDTO.isSoldOut());
+            match.setMatchLink(matchDTO.getMatchLink());
             match.setLastModified(LocalDateTime.now());
             dao.save(match);
             notifyListeners(matchDTO);
         }
+    }
+
+    private void deleteMatchAfterPlayed(Match match) {
+        dao.deleteMatch(match);
     }
 }
