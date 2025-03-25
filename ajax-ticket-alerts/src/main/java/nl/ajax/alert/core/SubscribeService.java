@@ -21,4 +21,8 @@ public class SubscribeService {
     public void saveSubscriptionDetails(SubscriptionRequest subscriptionRequest) {
         subscriptionDAO.save(new Subscription(subscriptionRequest.getEmail(), subscriptionRequest.getMatchAgainst()));
     }
+
+//    public void deleteSubscriptionDetails() {
+//        sub
+//    }
 }

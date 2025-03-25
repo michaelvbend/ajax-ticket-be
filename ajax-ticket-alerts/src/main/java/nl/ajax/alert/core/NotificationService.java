@@ -18,9 +18,7 @@ public class NotificationService implements MatchUpdateListener {
 
     @Override
     public void onMatchUpdate(MatchDTO matchDTO) {
-        boolean matchTicketAvailable = !matchDTO.isSoldOut();
-
-        if (matchTicketAvailable) {
+        if (!matchDTO.isSoldOut()) {
             List<String> emailList = subscribeService.getSubscriptionDetails(matchDTO.getAwayTeam())
                     .stream()
                     .map(Subscription::getEmail)

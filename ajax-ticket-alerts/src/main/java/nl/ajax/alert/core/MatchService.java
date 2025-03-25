@@ -36,17 +36,17 @@ public class MatchService {
     }
 
     public void syncMatches(MatchCallbackRequest matchCallbackRequest) {
-        List<Match> matchList = dao.findAllMatches();
-        Set<MatchDTO> matchSet = new HashSet<>(matchCallbackRequest.getMatches());
+        List<Match> existingMatches = dao.findAllMatches();
+        Set<MatchDTO> latestMatches = new HashSet<>(matchCallbackRequest.getMatches());
 
-        for (Match match : matchList) {
+        for (Match match : existingMatches) {
             MatchDTO existingMatch = new MatchDTO(match.getHomeTeam(), match.getAwayTeam(), match.isSoldOut(), match.getMatchLink());
-            if (!matchSet.contains(existingMatch)) {
+            if (!latestMatches.contains(existingMatch)) {
                 log.info("Deleting match {}", match.getAwayTeam());
                 deleteMatchAfterPlayed(match);
             }
         }
-        matchCallbackRequest.getMatches().forEach(this::processMatch);
+        latestMatches.forEach(this::processMatch);
     }
 
     public void addListener(MatchUpdateListener listener) {
@@ -64,11 +64,10 @@ public class MatchService {
         String matchId = matchDTO.getHomeTeam() + "-" + matchDTO.getAwayTeam();
         Optional<Match> existingMatch = dao.findMatchById(matchId);
 
-        if (existingMatch.isPresent()) {
-            updateMatchIfChanged(existingMatch.get(), matchDTO);
-        } else {
-            addNewMatch(matchId, matchDTO);
-        }
+        existingMatch.ifPresentOrElse(
+                match -> updateMatchIfChanged(match, matchDTO),
+                () -> addNewMatch(matchId, matchDTO)
+        );
         log.info("Match processed: {}", matchDTO);
     }
 

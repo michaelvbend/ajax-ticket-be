@@ -14,7 +14,6 @@ database:
     hibernate.hbm2ddl.auto: update
 twilioAccountSid: ${TWILIO_ACCOUNT_SID:-1}
 twilioAuthToken: ${TWILIO_AUTH_TOKEN:-"1"}
-twilioPhoneNumber: "+1234567890"
 twilioEmail: ${TWILIO_EMAIL:-"DEFAULT"}
 sendGridApiKey: ${SENDGRID_API_KEY}
 

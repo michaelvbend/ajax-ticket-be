@@ -30,9 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class MatchResourceIntegrationTest {
-
-//    private static final DropwizardAppExtension<AjaxAlertingConfiguration> RULE =
-//            new DropwizardAppExtension<>(TestAjaxAlertingApplication.class, "test-config.yml");
     private static final TwilioService twilioServiceMock = Mockito.mock(TwilioService.class);
 
     @RegisterExtension
