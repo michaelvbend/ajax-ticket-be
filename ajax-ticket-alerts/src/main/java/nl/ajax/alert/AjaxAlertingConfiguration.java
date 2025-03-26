@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class AjaxAlertingConfiguration extends Configuration {
@@ -32,10 +31,6 @@ public class AjaxAlertingConfiguration extends Configuration {
     @NotEmpty
     @JsonProperty("twilioAuthToken")
     private String twilioAuthToken;
-
-    @NotEmpty
-    @JsonProperty("twilioPhoneNumber")
-    private String twilioPhoneNumber;
 
     @NotEmpty
     @JsonProperty("sendGridApiKey")

@@ -19,12 +19,11 @@ public class NotificationService implements MatchUpdateListener {
     @Override
     public void onMatchUpdate(MatchDTO matchDTO) {
         if (!matchDTO.isSoldOut()) {
-            List<String> emailList = subscribeService.getSubscriptionDetails(matchDTO.getAwayTeam())
+            List<Subscription> subscriptionList = subscribeService.getSubscriptionDetails(matchDTO.getAwayTeam())
                     .stream()
-                    .map(Subscription::getEmail)
                     .toList();
 
-            twilioService.sendEmail(emailList, matchDTO);
+            twilioService.sendEmail(subscriptionList, matchDTO);
         }
     }
 }

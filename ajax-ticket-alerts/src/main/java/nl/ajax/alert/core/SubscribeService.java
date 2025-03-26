@@ -5,6 +5,7 @@ import nl.ajax.alert.db.SubscriptionDAO;
 import nl.ajax.alert.db.models.Subscription;
 
 import java.util.List;
+import java.util.UUID;
 
 public class SubscribeService {
 
@@ -22,7 +23,7 @@ public class SubscribeService {
         subscriptionDAO.save(new Subscription(subscriptionRequest.getEmail(), subscriptionRequest.getMatchAgainst()));
     }
 
-//    public void deleteSubscriptionDetails() {
-//        sub
-//    }
+    public void deleteSubscriptionDetails(UUID userToken) {
+        subscriptionDAO.delete(userToken);
+    }
 }

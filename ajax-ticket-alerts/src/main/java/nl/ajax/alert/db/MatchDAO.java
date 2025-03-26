@@ -3,7 +3,6 @@ package nl.ajax.alert.db;
 import io.dropwizard.hibernate.AbstractDAO;
 import lombok.extern.slf4j.Slf4j;
 import nl.ajax.alert.db.models.Match;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import java.util.List;
@@ -29,10 +28,8 @@ public class MatchDAO extends AbstractDAO<Match> {
     }
 
     public void deleteMatch(Match match) {
-        try (Session session = currentSession()) {
-            session.beginTransaction();
-            session.remove(match);
-            session.getTransaction().commit();
+        try {
+            currentSession().remove(match);
         } catch (Exception e) {
             log.error("Failed to delete match: {}", match.getId(), e);
             throw e;

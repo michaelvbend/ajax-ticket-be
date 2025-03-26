@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 public class SubscriptionDAO extends AbstractDAO<Subscription> {
@@ -24,15 +25,18 @@ public class SubscriptionDAO extends AbstractDAO<Subscription> {
         }
     }
 
-    public void save(Subscription subscription) { persist(subscription); }
+    public void save(Subscription subscription) {
+        log.info(String.valueOf(persist(subscription))); }
 
-    public void delete(Subscription subscription) {
-        try (Session session = currentSession()) {
-            session.beginTransaction();
-            session.remove(subscription);
-            session.getTransaction().commit();
+    public void delete(UUID userToken) {
+        try {
+            int deletedCount = currentSession().createMutationQuery("DELETE FROM Subscription WHERE userToken = :user_token")
+                    .setParameter("user_token", userToken)
+                    .executeUpdate();
+            log.info("Deleted {} subscription(s) for user token: {}", deletedCount, userToken);
         } catch (Exception e) {
-            log.error("Failed to delete subscription: {}", subscription.getId(), e);
+            log.error("Failed to delete subscription for user token: {}", userToken, e);
             throw e;
         }
-    }}
+    }
+}

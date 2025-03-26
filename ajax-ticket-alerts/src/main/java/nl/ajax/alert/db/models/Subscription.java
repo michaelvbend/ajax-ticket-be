@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -14,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class Subscription {
     @Id
     private String id;
+    private UUID userToken;
     private String email;
     private String matchAgainst;
 
@@ -25,5 +28,6 @@ public class Subscription {
     @PrePersist
     private void generateId() {
         this.id = email + "-" + matchAgainst;
+        this.userToken = UUID.randomUUID();
     }
 }
